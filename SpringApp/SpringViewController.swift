@@ -34,6 +34,8 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     var selectedY: CGFloat = 0
     var selectedRotate: CGFloat = 0
     
+    // MARK: Handle Slider
+    
     @IBAction func forceSliderChanged(_ sender: AnyObject) {
         selectedForce = sender.value(forKey: "value") as! CGFloat
         animateView()
@@ -48,6 +50,21 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         selectedDelay = sender.value(forKey: "value") as! CGFloat
         animateView()
         delayLabel.text = String(format: "Delay: %.1f", Double(selectedDelay))
+    }
+    
+    // MARK: Handle button
+    
+    @IBAction func ballButtonPressed(_ sender: AnyObject) {
+        
+        UIView.animate(withDuration: 0.1, animations: {
+            self.ballView.backgroundColor = UIColor(hex: "69DBFF")
+        }, completion: { finished in
+            UIView.animate(withDuration: 0.5, animations: {
+                self.ballView.backgroundColor = UIColor(hex: "#279CEB")
+            })
+        })
+        
+        animateView()
     }
 
     func dampingSliderChanged(_ sender: AnyObject) {
@@ -184,25 +201,12 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         animationPicker.dataSource = self
         animationPicker.showsSelectionIndicator = true
     }
-    
-    @IBAction func ballButtonPressed(_ sender: AnyObject) {
         
-        UIView.animate(withDuration: 0.1, animations: {
-            self.ballView.backgroundColor = UIColor(hex: "69DBFF")
-        }, completion: { finished in
-            UIView.animate(withDuration: 0.5, animations: {
-                self.ballView.backgroundColor = UIColor(hex: "#279CEB")
-            })
-        })
-        
-        animateView()
-    }
-    
     var isBall = false
     func changeBall() {
         isBall = !isBall
         let animation = CABasicAnimation()
-        let halfWidth = ballView.frame.width / 2
+        let halfWidth = ballView.frame.width/2
         let cornerRadius: CGFloat = isBall ? halfWidth : 10
         animation.keyPath = "cornerRadius"
         animation.fromValue = isBall ? 10 : halfWidth

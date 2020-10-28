@@ -40,7 +40,9 @@ open class SpringView: UIView, Springable {
     @IBInspectable public var curve: String = ""
     public var opacity: CGFloat = 1
     public var animateFrom: Bool = false
-
+    
+    /// SpringView có 1 object gọi là Spring
+    /// Spring sẽ quản lý all cho SpringView
     lazy private var spring : Spring = Spring(self)
 
     override open func awakeFromNib() {
@@ -52,6 +54,8 @@ open class SpringView: UIView, Springable {
         super.layoutSubviews()
         spring.customLayoutSubviews()
     }
+    
+    // MARK: Public
     
     public func animate() {
         self.spring.animate()

@@ -10,7 +10,7 @@ import UIKit
 import Spring
 
 class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, OptionsViewControllerDelegate {
-
+    
     @IBOutlet weak var delayLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
     @IBOutlet weak var forceLabel: UILabel!
@@ -34,6 +34,67 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     var selectedY: CGFloat = 0
     var selectedRotate: CGFloat = 0
     
+    let animations: [Spring.AnimationPreset] = [
+        .Shake,
+        .Pop,
+        .Morph,
+        .Squeeze,
+        .Wobble,
+        .Swing,
+        .FlipX,
+        .FlipY,
+        .Fall,
+        .SqueezeLeft,
+        .SqueezeRight,
+        .SqueezeDown,
+        .SqueezeUp,
+        .SlideLeft,
+        .SlideRight,
+        .SlideDown,
+        .SlideUp,
+        .FadeIn,
+        .FadeOut,
+        .FadeInLeft,
+        .FadeInRight,
+        .FadeInDown,
+        .FadeInUp,
+        .ZoomIn,
+        .ZoomOut,
+        .Flash
+    ]
+    var animationCurves: [Spring.AnimationCurve] = [
+        .EaseIn,
+        .EaseOut,
+        .EaseInOut,
+        .Linear,
+        .Spring,
+        .EaseInSine,
+        .EaseOutSine,
+        .EaseInOutSine,
+        .EaseInQuad,
+        .EaseOutQuad,
+        .EaseInOutQuad,
+        .EaseInCubic,
+        .EaseOutCubic,
+        .EaseInOutCubic,
+        .EaseInQuart,
+        .EaseOutQuart,
+        .EaseInOutQuart,
+        .EaseInQuint,
+        .EaseOutQuint,
+        .EaseInOutQuint,
+        .EaseInExpo,
+        .EaseOutExpo,
+        .EaseInOutExpo,
+        .EaseInCirc,
+        .EaseOutCirc,
+        .EaseInOutCirc,
+        .EaseInBack,
+        .EaseOutBack,
+        .EaseInOutBack
+    ]
+    var isBall = false
+
     // MARK: Handle Slider
     
     @IBAction func forceSliderChanged(_ sender: AnyObject) {
@@ -41,11 +102,13 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         animateView()
         forceLabel.text = String(format: "Force: %.1f", Double(selectedForce))
     }
+    
     @IBAction func durationSliderChanged(_ sender: AnyObject) {
         selectedDuration = sender.value(forKey: "value") as! CGFloat
         animateView()
         durationLabel.text = String(format: "Duration: %.1f", Double(selectedDuration))
     }
+    
     @IBAction func delaySliderChanged(_ sender: AnyObject) {
         selectedDelay = sender.value(forKey: "value") as! CGFloat
         animateView()
@@ -66,7 +129,11 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         
         animateView()
     }
-
+    
+    @IBAction func shapeButtonPressed(_ sender: AnyObject) {
+        changeBall()
+    }
+    
     func dampingSliderChanged(_ sender: AnyObject) {
         selectedDamping = sender.value(forKey: "value") as! CGFloat
         animateView()
@@ -119,80 +186,19 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         ballView.curve = animationCurves[selectedEasing].rawValue
     }
     
-   @objc func minimizeView(_ sender: AnyObject) {
+    @objc func minimizeView(_ sender: AnyObject) {
         SpringAnimation.spring(duration: 0.7, animations: {
             self.view.transform = CGAffineTransform(scaleX: 0.935, y: 0.935)
         })
         UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: true)
     }
     
-   @objc func maximizeView(_ sender: AnyObject) {
+    @objc func maximizeView(_ sender: AnyObject) {
         SpringAnimation.spring(duration: 0.7, animations: {
             self.view.transform = CGAffineTransform(scaleX: 1, y: 1)
         })
         UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
     }
-
-    let animations: [Spring.AnimationPreset] = [
-        .Shake,
-        .Pop,
-        .Morph,
-        .Squeeze,
-        .Wobble,
-        .Swing,
-        .FlipX,
-        .FlipY,
-        .Fall,
-        .SqueezeLeft,
-        .SqueezeRight,
-        .SqueezeDown,
-        .SqueezeUp,
-        .SlideLeft,
-        .SlideRight,
-        .SlideDown,
-        .SlideUp,
-        .FadeIn,
-        .FadeOut,
-        .FadeInLeft,
-        .FadeInRight,
-        .FadeInDown,
-        .FadeInUp,
-        .ZoomIn,
-        .ZoomOut,
-        .Flash
-    ]
-
-    var animationCurves: [Spring.AnimationCurve] = [
-        .EaseIn,
-        .EaseOut,
-        .EaseInOut,
-        .Linear,
-        .Spring,
-        .EaseInSine,
-        .EaseOutSine,
-        .EaseInOutSine,
-        .EaseInQuad,
-        .EaseOutQuad,
-        .EaseInOutQuad,
-        .EaseInCubic,
-        .EaseOutCubic,
-        .EaseInOutCubic,
-        .EaseInQuart,
-        .EaseOutQuart,
-        .EaseInOutQuart,
-        .EaseInQuint,
-        .EaseOutQuint,
-        .EaseInOutQuint,
-        .EaseInExpo,
-        .EaseOutExpo,
-        .EaseInOutExpo,
-        .EaseInCirc,
-        .EaseOutCirc,
-        .EaseInOutCirc,
-        .EaseInBack,
-        .EaseOutBack,
-        .EaseInOutBack
-    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -201,8 +207,7 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         animationPicker.dataSource = self
         animationPicker.showsSelectionIndicator = true
     }
-        
-    var isBall = false
+    
     func changeBall() {
         isBall = !isBall
         let animation = CABasicAnimation()
@@ -214,10 +219,6 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         animation.duration = 0.2
         ballView.layer.cornerRadius = cornerRadius
         ballView.layer.add(animation, forKey: "radius")
-    }
-    
-    @IBAction func shapeButtonPressed(_ sender: AnyObject) {
-        changeBall()
     }
     
     func resetButtonPressed(_ sender: AnyObject) {

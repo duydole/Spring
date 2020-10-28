@@ -95,6 +95,28 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     ]
     var isBall = false
 
+    // MARK: Life Cycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        animationPicker.delegate = self
+        animationPicker.dataSource = self
+        animationPicker.showsSelectionIndicator = true
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let optionsViewController = segue.destination as? OptionsViewController {
+            optionsViewController.delegate = self
+            setOptions()
+            optionsViewController.data = ballView
+        }
+        else if let codeViewController = segue.destination as? CodeViewController {
+            setOptions()
+            codeViewController.data = ballView
+        }
+    }
+
     // MARK: Handle Slider
     
     @IBAction func forceSliderChanged(_ sender: AnyObject) {
@@ -138,6 +160,8 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         selectedDamping = sender.value(forKey: "value") as! CGFloat
         animateView()
     }
+    
+    // MARK:
     
     func velocitySliderChanged(_ sender: AnyObject) {
         selectedVelocity = sender.value(forKey: "value") as! CGFloat
@@ -199,15 +223,7 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         })
         UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
-        animationPicker.delegate = self
-        animationPicker.dataSource = self
-        animationPicker.showsSelectionIndicator = true
-    }
-    
     func changeBall() {
         isBall = !isBall
         let animation = CABasicAnimation()
@@ -262,18 +278,6 @@ class SpringViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         default:
             selectedEasing = row
             animateView()
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let optionsViewController = segue.destination as? OptionsViewController {
-            optionsViewController.delegate = self
-            setOptions()
-            optionsViewController.data = ballView
-        }
-        else if let codeViewController = segue.destination as? CodeViewController {
-            setOptions()
-            codeViewController.data = ballView
         }
     }
 }
